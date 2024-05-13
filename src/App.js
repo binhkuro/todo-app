@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 import { openDB } from 'idb';
-import { AiOutlineDelete } from "react-icons/ai";
-import { BsCheckLg } from 'react-icons/bs';
-import { MdModeEdit } from "react-icons/md";
-import { FaArrowAltCircleUp } from "react-icons/fa";
-import { FaArrowAltCircleDown } from "react-icons/fa";
+import TodoInput from './components/TodoInput';
+import TodoSearch from './components/TodoSearch';
+import TodoSwitchScreen from './components/TodoSwitchScreen';
+import TodoList from './components/TodoList';
 
 const ITEMS_PER_PAGE = 4;
 
@@ -240,7 +239,9 @@ class App extends Component {
       await db.delete('completed', idToDelete);
 
       const updatedCompletedTodoList = await db.getAll('completed');
-      this.setState({ completedTodoList: updatedCompletedTodoList });
+      this.setState({
+        completedTodoList: updatedCompletedTodoList.reverse()
+      });
     }
   };
 
@@ -315,181 +316,47 @@ class App extends Component {
         <h1>Todo List</h1>
 
         <div className="todo-wrapper">
-          <div className="todo-input">
-            <div className="todo-input-item">
-              <label>Title</label>
-              <input
-                type="text"
-                value={newTitle}
-                onChange={(e) => this.setState({ newTitle: e.target.value })}
-                placeholder="Enter your task"
-              />
-            </div>
-            <div className="todo-input-item">
-              <label>Description</label>
-              <input
-                type="text"
-                value={newDescription}
-                onChange={(e) => this.setState({ newDescription: e.target.value })}
-                placeholder="Describe your task"
-              />
-            </div>
-            <div className="todo-input-item">
-              <button type="button" onClick={this.addTodo} className="primaryBtn">
-                Add
-              </button>
-            </div>
-          </div>
+          <TodoInput
+            newTitle={newTitle}
+            newDescription={newDescription}
+            handleTitleChange={(e) => this.setState({ newTitle: e.target.value })}
+            handleDescriptionChange={(e) => this.setState({ newDescription: e.target.value })}
+            addTodo={this.addTodo}
+          />
 
-          <div className="search-area">
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={this.handleSearchChange}
-              placeholder="Search by title or description"
-            />
-          </div>
+          <TodoSearch
+            searchKeyword={searchKeyword}
+            onSearchChange={this.handleSearchChange}
+          />
 
-          <div className="btn-area">
-            <button
-              className={`isCompletedScreen ${!isCompletedScreen && 'active'}`}
-              onClick={() => this.switchScreen(false)}
-            >
-              Todo
-            </button>
-            <button
-              className={`isCompletedScreen ${isCompletedScreen && 'active'}`}
-              onClick={() => this.switchScreen(true)}
-            >
-              Completed
-            </button>
-          </div>
+          <TodoSwitchScreen
+            isCompletedScreen={isCompletedScreen}
+            onSwitchScreen={(isCompletedScreen) => this.switchScreen(isCompletedScreen)}
+          />
 
-          <div className="todo-list">
-            {!isCompletedScreen &&
-              displayedList.map((item, index) => (
-                <div key={index} className="todo-list-item">
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                    {item.updatedAt ? (
-                      <p>
-                        <small>Updated At: {item.updatedAt}</small>
-                      </p>
-                    ) : (
-                      <p>
-                        <small>Created At: {item.createdAt}</small>
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <AiOutlineDelete
-                      className="delete-icon"
-                      onClick={() => this.deleteTodo(index)}
-                    />
-                    <BsCheckLg
-                      className="check-icon"
-                      onClick={() => this.completeTodo(index)}
-                    />
-                    <MdModeEdit
-                      className="edit-icon"
-                      onClick={() => this.startEdit(index)}
-                    />
-                    {!(currentPage === 0 && index === 0) && (
-                      <FaArrowAltCircleUp
-                        className="move-up-icon"
-                        onClick={() => this.moveUp(index)}
-                      />
-                    )}
-                    {!(currentPage === totalPages - 1 && index === displayedList.length - 1) && (
-                      <FaArrowAltCircleDown
-                        className="move-down-icon"
-                        onClick={() => this.moveDown(index)}
-                      />
-                    )}
-                  </div>
-
-                  {editIndex === this.getGlobalIndex(index) && (
-                    <div className="edit-section">
-                      <div className="todo-input-item">
-                        <label>Title</label>
-                        <input
-                          type="text"
-                          value={editTitle}
-                          onChange={(e) => this.setState({ editTitle: e.target.value })}
-                        />
-                      </div>
-                      <div className="todo-input-item">
-                        <label>Description</label>
-                        <input
-                          type="text"
-                          value={editDescription}
-                          onChange={(e) => this.setState({ editDescription: e.target.value })}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={this.editTodo}
-                        className="primaryBtn"
-                      >
-                        Update
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-
-            {isCompletedScreen &&
-              displayedList.map((item, index) => (
-                <div key={index} className="todo-list-item">
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                    <p>
-                      <small>Finished At: {item.finishedAt}</small>
-                    </p>
-                  </div>
-                  <div>
-                    <AiOutlineDelete
-                      className="delete-icon"
-                      onClick={() => this.deleteCompletedTodo(index)}
-                    />
-                    {!(currentPage === 0 && index === 0) && (
-                      <FaArrowAltCircleUp
-                        className="move-up-icon"
-                        onClick={() => this.moveUpComplete(index)}
-                      />
-                    )}
-                    {!(currentPage === totalPages - 1 && index === displayedList.length - 1) && (
-                      <FaArrowAltCircleDown
-                        className="move-down-icon"
-                        onClick={() => this.moveDownComplete(index)}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-
-            <div className="pagination">
-              <button
-                disabled={currentPage === 0}
-                onClick={() => this.changePage('previous')}
-              >
-                Previous
-              </button>
-              <span>
-                Page {currentPage + 1} of {totalPages}
-              </span>
-              <button
-                disabled={currentPage >= totalPages - 1}
-                onClick={() => this.changePage('next')}
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <TodoList
+            displayedList={displayedList}
+            isCompletedScreen={isCompletedScreen}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            deleteTodo={this.deleteTodo}
+            completeTodo={this.completeTodo}
+            startEdit={this.startEdit}
+            moveUp={this.moveUp}
+            moveDown={this.moveDown}
+            editIndex={editIndex}
+            editTitle={editTitle}
+            editDescription={editDescription}
+            handleTitleChange={(value) => this.setState({ editTitle: value })}
+            handleDescriptionChange={(value) => this.setState({ editDescription: value })}
+            editTodo={this.editTodo}
+            deleteCompletedTodo={this.deleteCompletedTodo}
+            moveUpComplete={this.moveUpComplete}
+            moveDownComplete={this.moveDownComplete}
+            changePage={this.changePage}
+          />
         </div>
-      </div>
+      </div >
     );
   }
 }

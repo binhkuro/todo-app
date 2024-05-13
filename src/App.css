@@ -73,7 +73,7 @@ h1 {
   border-radius: 5px;
   outline: none;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
-  width: 300px;
+  width: 100%;
   flex-grow: 1;
 }
 
