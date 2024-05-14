@@ -130,6 +130,25 @@ class App extends Component {
     }
   };
 
+  handleMove = (id, direction) => {
+    const { todoList } = this.state;
+    const index = todoList.findIndex(todo => todo.id === id);
+    if (index === -1) return;
+
+    let newTodoList = [...todoList];
+    const movedItem = newTodoList[index];
+
+    if (direction === 'up' && index > 0) {
+      newTodoList.splice(index, 1);
+      newTodoList.splice(index - 1, 0, movedItem);
+    }
+    else if (direction === 'down' && index < newTodoList.length - 1) {
+      newTodoList.splice(index, 1);
+      newTodoList.splice(index + 1, 0, movedItem);
+    }
+    this.setState({ todoList: newTodoList });
+  };
+
   render() {
     const { isCompletedScreen, todoList, searchKeyword, currentPage } = this.state;
     const filteredList = todoList.filter(todo =>
@@ -173,6 +192,7 @@ class App extends Component {
             editDescription={this.state.editDescription}
             handleTitleChange={this.handleTitleChange}
             handleDescriptionChange={this.handleDescriptionChange}
+            handleMove={this.handleMove}
           />
           <TodoPagination
             currentPage={currentPage}

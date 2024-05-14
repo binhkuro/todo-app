@@ -1,8 +1,9 @@
 import React from 'react';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import { BsCheckLg } from 'react-icons/bs';
+import { FaArrowAltCircleUp, FaArrowAltCircleDown } from 'react-icons/fa';
 
-function TodoList({ displayedList, deleteTodo, completeTodo, startEdit, editTodo, editId, editTitle, handleTitleChange, editDescription, handleDescriptionChange }) {
+function TodoList({ displayedList, deleteTodo, completeTodo, startEdit, editTodo, editId, editTitle, handleTitleChange, editDescription, handleDescriptionChange, handleMove }) {
     return (
         <div className="todo-list">
             {displayedList.map((item, index) => {
@@ -23,6 +24,8 @@ function TodoList({ displayedList, deleteTodo, completeTodo, startEdit, editTodo
                             <AiOutlineDelete onClick={() => deleteTodo(item.id)} className='delete-icon' />
                             {item.status !== 'complete' && <BsCheckLg onClick={() => completeTodo(item.id)} className='check-icon' />}
                             {item.status !== 'complete' && <AiOutlineEdit onClick={() => startEdit(item.id)} className='edit-icon' />}
+                            <FaArrowAltCircleUp onClick={() => handleMove(item.id, 'up')} className='move-up-icon' />
+                            <FaArrowAltCircleDown onClick={() => handleMove(item.id, 'down')} className='move-down-icon' />
                         </div>
                         {editId === item.id && (
                             <div className="edit-section">
