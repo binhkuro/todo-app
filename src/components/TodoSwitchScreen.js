@@ -6,13 +6,13 @@ class TodoSwitchScreen extends Component {
         return (
             <div className="btn-area">
                 <button
-                    className={`isCompletedScreen ${!isCompletedScreen ? 'activate' : ''}`}
+                    className={`isCompletedScreen ${!isCompletedScreen ? 'active' : ''}`}
                     onClick={() => onSwitchScreen(false)}
                 >
                     Todo
                 </button>
                 <button
-                    className={`isCompletedScreen ${isCompletedScreen ? 'activate' : ''}`}
+                    className={`isCompletedScreen ${isCompletedScreen ? 'active' : ''}`}
                     onClick={() => onSwitchScreen(true)}
                 >
                     Completed
