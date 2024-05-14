@@ -22,9 +22,7 @@ function TodoList({ displayedList, deleteTodo, completeTodo, startEdit, editTodo
                         <div className="actions">
                             <AiOutlineDelete onClick={() => deleteTodo(item.id)} className='delete-icon' />
                             {item.status !== 'complete' && <BsCheckLg onClick={() => completeTodo(item.id)} className='check-icon' />}
-                            {item.status !== 'complete' && (
-                                <AiOutlineEdit onClick={() => startEdit(item.id)} className='edit-icon' />
-                            )}
+                            {item.status !== 'complete' && <AiOutlineEdit onClick={() => startEdit(item.id)} className='edit-icon' />}
                         </div>
                         {editId === item.id && (
                             <div className="edit-section">
